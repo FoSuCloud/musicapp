@@ -18,7 +18,7 @@
   }
 </script>
 
-<style>
+<style scoped lang="stylus" rel="sheetsheet/stylus">
   @media screen and (min-width: 320px) {
       html {font-size: 14px;}
   }

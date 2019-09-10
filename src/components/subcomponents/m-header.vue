@@ -12,7 +12,7 @@
 </script>
 
 <style scoped lang="stylus" rel="sheetsheet/stylus">
-
+  @import '../../common/stylus/variable'
   .header
     .header-wrapper
       margin:0.31rem auto
@@ -25,5 +25,5 @@
         height:2.5rem
       .header-text
         font-size:$font-size-medium-x
-        color:#0074D9
+        color:$color-theme
 </style>

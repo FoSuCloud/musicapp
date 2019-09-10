@@ -20,20 +20,21 @@
 </script>
 
 <style scoped lang="stylus" rel="sheetsheet/stylus">
-
+  @import '../../common/stylus/variable'
   .tab
     display:flex
+    margin-bottom:0.5rem
     .tab-item
       flex:1
       text-align:center
       &.router-link-active
         .tab-link
-          color:$color-highlight-background
+          color:$color-theme
           position: relative
-          margin-bottom:0.2rem
+          padding-bottom:0.2rem
           &:after
             content:" "
-            border-bottom:0.06rem solid red
+            border-bottom:0.06rem solid $color-theme
             width:100%
             position: absolute
             bottom:0
