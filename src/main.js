@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import fastclick from 'fastclick'
-import './common/stylus/index.styl'
+import 'common/stylus/index.styl'
 import 'babel-polyfill'
 
 // 设置fastclick.attach(document.body)可以让body里面的内容点击的那300毫秒延迟

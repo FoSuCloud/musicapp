@@ -17,3 +17,38 @@
 1. 在app.vue中设置`@media screen and (min-width:320px) html {fon-size:14px} 表示的就是页面最小宽度为320px的时候，屏幕根目录的rem表示的是14px`
 2. rem是css3新增的一个非常重要的相对单位，使用rem设置元素大小的时候，相对大小相对的是html元素，`通过修改不同设备下的rem就可以适配各种设备`
 
+## 安装jsonp实现跨域
+1. 安装:`在package.json中添加"jsonp":"^0.2.1";在命令行执行cnpm install下载`
+2. jsonp的github文档[文档](https://github.com/webmodules/jsonp)
+3. 编写jsonp函数
+```
+import originJSONP from 'jsonp'
+
+export default function jsonp(url,data,option){
+  url=(url.indexOf('?')!=-1?url+'&':url+'?')+param(data)
+  return new Promise((resolve,reject)=>{
+    originJSONP(url,option,(err,data)=>{
+      if(!err){
+        resolve(data)
+      }else{
+        reject(err)
+      }
+    })
+  })
+}
+// 重新组织data
+function param(data){
+  let url='';
+  for(var key in data){
+    let val=data[key]===undefined?'':data[key]
+    // 该语句先执行右边的再执行左边的
+    url+=`&${key}=${encodeURIComponent(val)}`
+
+  }
+  //去掉第一个&
+  return url?url.substr(1):''
+}
+
+```
+4. `配置基本参数和设置请求地址，但是qq音乐接口跟换了，所以实际500状态码`
+

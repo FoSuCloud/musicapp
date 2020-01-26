@@ -2,13 +2,16 @@
   <div id="app">
     <m-header></m-header>
     <tab></tab>
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
   import MHeader from 'components/subcomponents/m-header'
   import Tab from 'components/subcomponents/tab'
+
   export default {
     name: 'App',
     components:{
@@ -18,7 +21,7 @@
   }
 </script>
 
-<style>
+<style scoped lang="stylus" rel="sheetsheet/stylus">
   @media screen and (min-width: 320px) {
       html {font-size: 14px;}
   }
