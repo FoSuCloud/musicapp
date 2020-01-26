@@ -20,9 +20,14 @@
 </script>
 
 <style scoped lang="stylus" rel="sheetsheet/stylus">
+<<<<<<< HEAD
   @import "~common/stylus/variable"
+=======
+  @import '../../common/stylus/variable'
+>>>>>>> 01e76c2ba07f4f817b824e2c8c91519a5c34f21d
   .tab
     display:flex
+    margin-bottom:0.5rem
     .tab-item
       flex:1
       text-align:center
@@ -33,10 +38,14 @@
         .tab-link
           color:$color-theme
           position: relative
-          margin-bottom:0.2rem
+          padding-bottom:0.2rem
           &:after
             content:" "
+<<<<<<< HEAD
             border-bottom:0.16rem solid $color-theme-d
+=======
+            border-bottom:0.06rem solid $color-theme
+>>>>>>> 01e76c2ba07f4f817b824e2c8c91519a5c34f21d
             width:100%
             position: absolute
             bottom:-5px
