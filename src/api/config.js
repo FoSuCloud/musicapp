@@ -1,7 +1,7 @@
 const commonParams = {
-  g_tk: 1928093487,
+  g_tk: 5381,
   inCharset: 'utf-8',
-  outCharset: 'utf-8',
+  outCharset: 'GB2312',
   notice: 0,
   format: 'jsonp'
 }

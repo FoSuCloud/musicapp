@@ -52,3 +52,8 @@ function param(data){
 ```
 4. `配置基本参数和设置请求地址，但是qq音乐接口跟换了，所以实际500状态码`
 
+## 路由跳转
+1. 路由跳转使用`this.$router.push({path:''})的方式`
+2. 另外还可以传递参数
+3. 但是传递参数需要使用query，使用params不知为何取不到值
+4. `that.$router.push({path:'/preview',query:{list:list}})`

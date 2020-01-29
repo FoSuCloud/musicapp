@@ -20,6 +20,7 @@
 </script>
 
 <style scoped lang="stylus" rel="sheetsheet/stylus">
+  @import '../../common/stylus/variable'
   .tab
     display:flex
     margin-bottom:0.5rem

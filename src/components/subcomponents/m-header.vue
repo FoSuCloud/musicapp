@@ -12,6 +12,7 @@
 </script>
 
 <style scoped lang="stylus" rel="sheetsheet/stylus">
+  @import '../../common/stylus/variable'
   .header
     .header-wrapper
       margin:0.31rem auto

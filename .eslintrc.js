@@ -38,6 +38,9 @@ module.exports = {
     'eqeqeq':0,
     'keyword-spacing':0,
     'semi':0,
-    'no-multiple-empty-lines':0
+    'no-multiple-empty-lines':0,
+    'no-return-assign':0,
+    'quotes':0,
+    'camelcase':0
   }
 }
