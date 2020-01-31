@@ -7,6 +7,9 @@
             @touchstart="touchstart" @touchend="touchend(i)">
           </div>
       </div>
+      <div class="dot">
+        <span v-for="(item,i) in list" :key="i" :class="i==now_num?'bor_a':''"></span>
+      </div>
     </div>
     <preview :list="p_list" :i_index="i_index" v-if="p_show" @show_mask="show_mask"></preview>
   </div>
@@ -21,7 +24,8 @@
         i_index:1,
         p_show:false,
         touch_start:'',
-        timer:''
+        timer:'',
+        now_num:0
       }
     },
     components:{
@@ -44,10 +48,12 @@
           i--;
           this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
           clearInterval(this.timer)
+          this.now_num=i;
           this.autoplay(i)
         }else if(end_x-this.touch_start<-50){
           i++;
           this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
+          this.now_num=i;
           clearInterval(this.timer)
           this.autoplay(i)
         }
@@ -59,6 +65,7 @@
          var timer=setInterval(()=>{
            this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
            i++;
+           this.now_num=i-1;
            //重新开始
            if(i==this.list.length){
              i=0;
@@ -97,6 +104,7 @@
     height:200px
     width:100vw
     overflow hidden
+    position relative
     .slider_l
       height:200px
       font-size:0
@@ -110,5 +118,23 @@
           width:100vw
           height:200px
           display:block
-
+    .dot
+      position absolute
+      bottom 0
+      left 0
+      text-align center
+      height 20px
+      display flex
+      align-items center
+      justify-content center
+      right 0
+      margin auto
+      span
+        width 10px
+        height 10px
+        border-radius 50%
+        margin-right 10px
+        background rgba(255,255,255,.5)
+        &.bor_a
+          background rgba(96,96,96,.5)
 </style>

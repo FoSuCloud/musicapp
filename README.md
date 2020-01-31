@@ -80,3 +80,27 @@ function param(data){
 ## 左滑右滑以及长按事件
 1. `使用touchstart,touchend事件来获取鼠标前后pageX，通过差值来判断是否属于滑动`
 2. `使用touchstart,touchend事件来获取鼠标前后pageX以及鼠标两个事件的时间间隔，如果坐标变化不大且时间间隔够长就视为长按事件`
+
+## referer检验
+1. `在某些接口中存在referer校验，获取不到数据，即使使用jsonp也不行，因为jsonp只是解决跨域问题`
+2. `referer校验是为了检验来源网址，尝试过在前端！！！axios修改Referer字段，但是不行因为W3C设置了不能修改，为了安全性！`
+3. `解决方法:使用接口代理的方式，在后端！！！通过创建axios的方式来设置header`
+```
+// 使用axios设置header的方式返回数据
+router.get('/index/test',function(req, res, next){
+	let url='https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg';
+	axios.get(url,{
+		headers:{
+			origin:'https://y.qq.com',
+			referer:'https://y.qq.com/n/yqq/playlist/7378198403.html'
+		},
+		params:{disstid:7378198403,  inCharset: 'utf-8',
+			outCharset: 'utf-8',onlysong:0,utf8:1,type:1}
+	}).then((response)=>{
+		// console.log(response.data.slice(13,-2))
+		res.json(JSON.parse(response.data.slice(13,-1)))
+	}).catch((e)=>{
+		console.log(e)
+	})
+})
+```
