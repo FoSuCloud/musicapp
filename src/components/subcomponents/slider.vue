@@ -1,53 +1,84 @@
 <template>
-  <div class="sli_a">
-    <div class="slider_l" ref="slider">
-        <div v-for="(item,i) in list" class="sli_i" :key="i">
-          <img :src="item.picurl" :alt="item.mvtitle" @click="preimg">
-        </div>
+  <div>
+    <div class="sli_a">
+      <div class="slider_l" ref="slider">
+          <div v-for="(item,i) in list" class="sli_i" :key="i">
+            <img :src="item.picurl" :alt="item.mvtitle" @click="preimg(i)"
+            @touchstart="touchstart" @touchend="touchend(i)">
+          </div>
+      </div>
     </div>
+    <preview :list="p_list" :i_index="i_index" v-if="p_show" @show_mask="show_mask"></preview>
   </div>
 </template>
 
 <script>
-  import {preimg} from 'common/js/util'
+  import preview from 'components/subcomponents/preview'
   export default {
     data(){
-      return{}
+      return{
+        p_list:[],
+        i_index:1,
+        p_show:false,
+        touch_start:'',
+        timer:''
+      }
+    },
+    components:{
+      preview
     },
     props:['list','interval'],
     methods:{
+      // 显示或者隐藏模板
+      show_mask(){
+        this.p_show=!this.p_show
+      },
+      touchstart(e){
+        this.touch_start=e.changedTouches[0].pageX
+      },
+      touchend(i){
+        var e=event;
+        var end_x=e.changedTouches[0].pageX;
+        let width=this.$refs.slider.offsetWidth;
+        if(end_x-this.touch_start>50){
+          i--;
+          this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
+          clearInterval(this.timer)
+          this.autoplay(i)
+        }else if(end_x-this.touch_start<-50){
+          i++;
+          this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
+          clearInterval(this.timer)
+          this.autoplay(i)
+        }
+      },
       // 自动开始轮播
-      autoplay(){
-         // let cla=this.$refs.slider.getAttribute('class');
-         let i=0;
+      autoplay(index){
+         let i=index?index:0;
          let width=this.$refs.slider.offsetWidth;
-         console.log(width)
-         // this.$refs.slider.setAttribute('style',`animation:switch ${this.interval}s ${this.ways} ${this.infinity?'infinite':1}`)
-         setInterval(()=>{
+         var timer=setInterval(()=>{
            this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
            i++;
+           //重新开始
            if(i==this.list.length){
-             i=0; //重新开始
+             i=0;
            }
          },this.interval*1000)
+         this.timer=timer;
       },
-      preimg(){
-        // var src=e.currentTarget.dataset.src
-        var n_list=[];
-        var list=this.list;
-        if(list.length>0){
-          list.forEach((item,i)=>{
-            var obj={}
-            obj.src=item.picurl
-            obj.title=item.mvtitle
-            n_list.push(obj)
-          })
-        }
-        preimg(this,n_list)
+      // 显示预览图
+      preimg(i){
+        var n_list=[]
+        this.list.forEach((item)=>{
+          let obj={};
+          obj.src=item.picurl;
+          obj.title=item.mvtitle;
+          n_list.push(obj);
+        })
+        this.p_list=n_list;
+        this.i_index=i;
+        this.p_show=true
       }
-    },
-    created(){
-      // console.log('created',this.list)
     },
     // 使用mounted周期依然无法正确监听到数据接受，因此使用监听数据方式
     watch:{

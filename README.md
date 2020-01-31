@@ -57,3 +57,26 @@ function param(data){
 2. 另外还可以传递参数
 3. 但是传递参数需要使用query，使用params不知为何取不到值
 4. `that.$router.push({path:'/preview',query:{list:list}})`
+5. `在跳转之后的路由页面使用this.$route.query.list来接收参数`
+
+## 去除滚动条
+1. 谷歌`      &::-webkit-scrollbar width 0!important`
+
+## 为了方便真机调试
+1. 把config/index的`localhost改为 host: '192.168.1.115'`
+2. 无线局域网适配器 WLAN
+
+## 把网络图片保存到本地
+1. 根据网络上的思路，创建一个a元素，然后触发点击事件
+2. 该方法与我想的不太一样，但是也有值得学习的地方
+```
+  var a = document.createElement("a"); // 生成一个a元素
+  var event = new MouseEvent("click"); // 创建一个单击事件
+  a.download = name || "photo"; // 设置图片名称
+  a.href = imgsrc; // 将生成的URL设置为a.href属性
+  a.dispatchEvent(event); // 触发a的单击事件
+```
+
+## 左滑右滑以及长按事件
+1. `使用touchstart,touchend事件来获取鼠标前后pageX，通过差值来判断是否属于滑动`
+2. `使用touchstart,touchend事件来获取鼠标前后pageX以及鼠标两个事件的时间间隔，如果坐标变化不大且时间间隔够长就视为长按事件`

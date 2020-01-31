@@ -41,6 +41,7 @@ module.exports = {
     'no-multiple-empty-lines':0,
     'no-return-assign':0,
     'quotes':0,
-    'camelcase':0
+    'camelcase':0,
+    'no-unneeded-ternary':0
   }
 }
