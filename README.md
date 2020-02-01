@@ -65,6 +65,12 @@ function param(data){
 ## 为了方便真机调试
 1. 把config/index的`localhost改为 host: '192.168.1.115'`
 2. 无线局域网适配器 WLAN
+3. `如果是请求本地服务器的数据，那么设置axios的baseUrl不能设为localhost，因为手机的localhost不一样`
+```
+// 设置axios请求的基础地址
+axios.defaults.baseURL='http://192.168.1.115:3000';
+```
+4. 应该设置为何WLAN的地址一致
 
 ## 把网络图片保存到本地
 1. 根据网络上的思路，创建一个a元素，然后触发点击事件
@@ -103,4 +109,125 @@ router.get('/index/test',function(req, res, next){
 		console.log(e)
 	})
 })
+```
+
+## 设置推荐页下面那些地方都是可滚动的
+```
+    mounted(){
+      var y =this.$refs.recommend.getBoundingClientRect().y;
+      this.$refs.recommend.setAttribute('style',`height:calc(100vh - ${y}px)`)
+    },
+```
+1. 思路:`获取到元素所在的y坐标，那么减去该坐标也就获取到推荐页面的高度了，然后再设置可滚动就可以了`
+```
+.recommend
+  overflow scroll
+```
+
+## 响应式修改vue的数据
+*  vue的数组不能直接通过this.list[0]=false这种方式来修改数据
+*  需要使用this.$set(list,0,false)这种方式，因为list是对象，不是基本数据类型
+*  这就涉及到了vue的响应式原理
+```
+            // this.list[i+1]=true;
+            this.$set(this.list,i+1,true)
+```
+* `需要注意的是，如果需要响应式的修改数据，也就是在视图层也能看到变化`
+* `那么即使是基本数据类型也需要额外进行操作，也就是在computed中return数据`
+* `那么是引用数据类型也需要额外进行操作，也就是使用this.$set(对象,索引或者属性名,值)来响应式的修改数据`
+
+## 上拉加载
+* `关键在于监听touchmove事件，判断公式是 元素y坐标+元素高度-元素滚动高度<页面可用高度+1`
+* `+1是为了好判断一丢丢，防止有小数的情况`
+```
+      // 获取滚动事件，判断上拉加载
+      rem_move(e){
+        // 页面可用高度
+        var page_height=window.innerHeight;
+        // 元素高度(包括不可见部分)
+        var rem_h=this.$refs.recommend.scrollHeight;
+        // 元素滚动高度
+        var rem_s_h=this.$refs.recommend.scrollTop;
+        // 元素左上角y坐标
+        var rem_y=this.$refs.recommend.getBoundingClientRect().y
+        console.log(page_height,rem_h,rem_s_h,rem_y)
+        console.log(rem_h+rem_y-rem_s_h)
+        // 如果 元素y坐标+元素高度-元素滚动高度<页面可用高度则视为上拉加载
+        if(rem_h+rem_y-rem_s_h<page_height+1 &&this.loading_show==false){
+          this.loading_show=true;
+          // 页面数+1
+          this.page++;
+          console.log("上拉加载")
+          this.getmusicdetail();
+        }
+      },
+```
+
+## 下拉加载
+* 思路:`通过touchstart,touchend事件来判断鼠标结束y坐标-鼠标开始y坐标>50，如果true则是下拉动作`
+* `同时需要满足当前元素滚动高度为0`
+```
+      // 判断下拉刷新(思路:鼠标结束y坐标-鼠标开始y坐标>50 && 元素滚动高度为0)
+      rem_start(e){
+        this.touch_s=e.changedTouches[0].pageY;
+      },
+      rem_end(e){
+        var touch_e=e.changedTouches[0].pageY;
+        var scro_y=this.$refs.recommend.scrollTop;
+        if(touch_e-this.touch_s>50&&scro_y==0&&this.light_show==false){
+          console.log("下拉刷新")
+          this.light_show=true;
+          // 重新获取第一页的歌单推荐
+          this.page=1;
+          this.getmusicdetail();
+        }
+      }
+```
+
+## 列表中部分img的src使用了请求到的http形式的地址(找不到图片)
+1. `但是如果有些图片是需要使用本地加载的图片，这个时候直接使用item.src?item.src:'/common/image/default.png'是没办法加载到本地图片的！`
+2. `这是因为请求返回的是text/html格式文件，不是png,但是如果只有一个图片，使用的是src="/common/image/default/png"则是正确的`
+3. `解决方法:使用requrie()来加载图片`
+4. `default_img:require('../../common/image/default.png')`
+
+## 懒加载图片
+1. 思路:其实就是还不需要显示的图片的src就设置为默认图片，`首先在mounted阶段初始化，保存当前显示的最后一个元素的索引`
+2. 公式:`可见的元素个数=（页面高度-元素所在坐标y）/单个图片高度,+1是为了不那么难看`
+```
+      // 初始化懒加载
+      init_lazy(){
+        // 获取元素所在坐标y
+        var y=this.$refs.remlist.getBoundingClientRect().y;
+        // 获取单个小图片的高度(此时无法获得)
+        // var height=document.getElementsByClassName('rem_i')[0].clientHeight;
+        var height=70;
+        // 获取页面高度
+        var win_h=window.innerHeight
+        // 公式 可见的元素个数=（页面高度-元素所在坐标y）/单个图片高度,+1是为了不那么难看
+        var i=parseInt((win_h-y)/height)+1;
+        // 设置懒加载的位置索引
+        this.lazy_index=i-1;
+        // 如果存在需要懒加载显示的元素则设置src为空,通过设置html
+      },
+```
+3. `监听滚动事件，需要懒加载的元素个数=parseInt(滚动高度/单个图片高度)`
+4. `同时需要进行一个懒加载高度判断，如果之前滚动到过此处，那么以后再次滚动到此处不要再次加载了！`
+```
+        // 获取单个小图片的高度
+        var height=document.getElementsByClassName('rem_i')[0].clientHeight;
+        // 获取滚动的高度(获取图片列表的滚动高度会失败。。)
+        var scro_h=this.$refs.recommend.scrollTop;
+        // 需要懒加载的元素个数=parseInt(滚动高度/单个图片高度)
+        var lazy_num=parseInt(scro_h/height);
+        // 同时需要进行一个懒加载高度判断，如果之前滚动到过此处，那么以后再次滚动到此处不要再次加载了！
+        while(scro_h>this.max_scro_h&&lazy_num>0){
+          this.max_scro_h=scro_h
+          // 增加元素与否？如果列表数量依旧大于索引数
+          if(this.rem_list.length>this.lazy_index){
+            this.lazy_index++;
+            lazy_num--;
+          }else{
+            lazy_num=0;
+          }
+        }
 ```

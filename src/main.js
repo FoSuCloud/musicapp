@@ -13,7 +13,7 @@ fastclick.attach(document.body)
 Vue.config.productionTip = false
 Vue.use({axios, VueAxios});
 // 设置axios请求的基础地址
-axios.defaults.baseURL='http://localhost:3000';
+axios.defaults.baseURL='http://192.168.1.115:3000';
 
 Vue.prototype.$axios=axios
 

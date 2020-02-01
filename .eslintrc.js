@@ -42,6 +42,7 @@ module.exports = {
     'no-return-assign':0,
     'quotes':0,
     'camelcase':0,
-    'no-unneeded-ternary':0
+    'no-unneeded-ternary':0,
+    'no-unused-vars':0
   }
 }
