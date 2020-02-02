@@ -231,3 +231,55 @@ router.get('/index/test',function(req, res, next){
           }
         }
 ```
+
+## 下载图片到本地
+1. 步骤:1. 前端使用ajax请求node后端地址
+2. node后端接收到url,使用http.get方式，监听reponse.on('end'),返回arraybuffer格式的数据
+3. 前端把arraybuffer格式数据转为base64数据`因为直接把a.href设置为url只是会跳转，不会真的下载`
+```
+前端:
+export function downloadIamge(imgsrc, name) {
+  var newImgsrc = 'http://192.168.1.115:3000/imgs/preview?src=' + imgsrc;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', newImgsrc, true);
+  xhr.responseType = 'arraybuffer';
+  xhr.onload = function () {
+    // arraybuffer格式的数据
+    var str=this.response;
+    // 转为base64格式数据
+    var n_s=transformArrayBufferToBase64(str)
+    var a = document.createElement("a"); // 生成一个a元素
+    var event = new MouseEvent("click"); // 创建一个单击事件
+    a.download = name || "photo"; // 设置图片名称
+    // 前面需要添加 'data:image/png;base64,'
+    a.href = 'data:image/png;base64,'+n_s; // 将生成的URL设置为a.href属性
+    a.dispatchEvent(event); // 触发a的单击事件
+  };
+  xhr.send();
+}
+
+function transformArrayBufferToBase64 (buffer) {
+    var binary = '';
+    var bytes = new Uint8Array(buffer);
+    for (var len = bytes.byteLength, i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+}
+```
+* 后端
+```
+router.get('/preview',(req,res,next)=>{
+	var src=req.query.src;
+	http.get(src, function (response) {
+	   var data = [];
+		 response.on('data', function(chunk) {
+			 data.push(chunk);
+		 }).on('end', function() {
+			 var buffer = Buffer.concat(data);
+			 res.send(buffer);
+		 });
+	 });
+})
+```
+* `思路:url格式不行，所以先在后端请求url,得到arraybuffer格式数据返回给前端，前端把arraybuffer数据转为base64数据，base64可以被直接下载`

@@ -168,24 +168,24 @@
   .rem_p
     color $color-theme
     font-size $font-size-medium-x
-    margin 20px auto
+    margin $font-size-medium-x auto
     text-align center
   .rem_list
-    margin 20px
+    margin $font-size-medium-x
     .rem_i
-      margin-bottom 20px
+      margin-bottom $font-size-medium-x
       display flex
       img
         display inline-block
-        border-radius 12px
-        width 70px
-        height 70px
-        margin-right 20px
+        border-radius $font-size-medium
+        width 4rem
+        height 4rem
+        margin-right $font-size-medium-x
       .rem_i_r
         display inline-block
         flex 1
         position relative
-        height 70px
+        height 4rem
         span
           display block
         .us
@@ -195,13 +195,13 @@
           -webkit-box-orient vertical
           font-size $font-size-medium-x
           color #fff
-          margin-top 5px
+          margin-top 0.3rem
         .ti
           position absolute
-          bottom 5px
+          bottom 0.3rem
           left 0
           font-size $font-size-small
           color #999
       &:last-child
-        margin-bottom 10px
+        margin-bottom $font-size-small-s
 </style>

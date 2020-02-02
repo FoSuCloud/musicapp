@@ -43,6 +43,14 @@ module.exports = {
     'quotes':0,
     'camelcase':0,
     'no-unneeded-ternary':0,
-    'no-unused-vars':0
+    'no-unused-vars':0,
+    'no-tabs':0,
+    'no-mixed-spaces-and-tabs':0,
+    'no-undef':0,
+    'no-useless-escape':0,
+    'space-in-parens':0,
+    'eol-last':0,
+    'one-var':0,
+    'no-unused-expressions':0
   }
 }

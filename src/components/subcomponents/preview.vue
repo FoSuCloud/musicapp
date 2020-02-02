@@ -41,13 +41,11 @@
          this.$emit('show_mask')
       },
       touch_start(e){
-        console.log(e)
         this.page_s_x=e.changedTouches[0].pageX;
         this.s_timeStamp=e.timeStamp
       },
       touch_end(e){
         var end_x=e.changedTouches[0].pageX;
-        // console.log('结束',this.page_s_x,end_x)
         var num=this.num
         let width=this.$refs.preview.offsetWidth;
         // 向右移动
