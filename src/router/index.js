@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import rank from 'components/rank/rank'
 import search from 'components/search/search'
 import singer from 'components/singer/singer'
+import singer_d from 'components/singer/detail'
 import recommend from 'components/recommend/recommend'
 import preview from 'components/subcomponents/preview'
 Vue.use(Router)
@@ -23,7 +24,10 @@ export default new Router({
     },
     {
       path :'/singer',
-      component:singer
+      component:singer,
+      children:[
+        {path:'detail',component:singer_d}
+      ]
     },
     {
       path :'/recommend',

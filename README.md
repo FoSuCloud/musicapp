@@ -283,3 +283,54 @@ router.get('/preview',(req,res,next)=>{
 })
 ```
 * `思路:url格式不行，所以先在后端请求url,得到arraybuffer格式数据返回给前端，前端把arraybuffer数据转为base64数据，base64可以被直接下载`
+
+## 图片加载失败(url是错误的，没有图片资源),使用默认的图片
+1. `onerror="this.src='http:\/\/y.gtimg.cn\/music\/photo_new\/T001R150x150M000001fNHEf1SFEFN.webp'"`
+2. `思路:对于img标签使用onerror事件，当图片资源不存在时会触发该事件，也就可以通过this.src=''这种方式来设置默认图片`
+3. 但是需要注意，使用本地图片出了问题，暂时不理，用网络图片吧
+
+## 两栏随之滚动实现
+1. 思路:`首先给右边栏设置点击事件，点击之后跳转到相应的歌手字母栏，直接通过使用索引获取字母栏索引，然后获取到那一栏的offsetTop,然后给父元素设置scrollTop=,就可以设置滚动了`
+2. `2. 滚动歌手栏，字母栏也需要影响的滚动，需要监听歌手栏的滚动位置，使用@scroll="",监听滚动事件`
+3. `2.2 需要提前计算得各个子元素的offsetTop，offsetTop也就是元素顶部到父元素顶部的距离，但是有点问题就是第一个元素到父元素的距离不是0，所以需要额外-element[0].offsetTop`
+4. `2.3 监听scroll事件，每次监听，都要判断哪一个歌手栏的offsetTop>滚动距离，大于则设置active`
+```
+      // 点击字母
+      change_a(i,flag){
+        var e=event;
+        var who=document.getElementsByClassName('vertical_l_s')[i];
+        var old=document.getElementsByClassName('a_active')[0];
+        if(old){
+          old.setAttribute('class','vertical_l_s')
+        }
+        who.setAttribute('class','vertical_l_s a_active');
+
+        // 如果是点击的话，(如果是滚动调用就不需要再滚动)
+        if(!flag){
+          // 获取索引为i的歌手字母的坐标,offsetTop指的是元素距离父元素的top的位置
+          // 因为不知道为何，即使是第一个元素距离父元素也有84px,所以需要计算一下
+          var singer_zero=document.getElementsByClassName('singer_l')[0].offsetTop
+          var singer_y=document.getElementsByClassName('singer_l')[i].offsetTop;
+          // 上下移动(设置scrollTop,数字)
+          this.$refs.singers.scrollTop=singer_y-singer_zero;
+        }
+      },
+      //监听元素滚动事件scroll
+      touch_end(e){
+        // DOM操作很消耗资源，但是此时还是这样省事吧。。
+        if( this.height_l.length==0){
+          var ho_h_z=document.getElementsByClassName('singer_l')[0].offsetTop;
+          for(var i=0; i<this.hotaz.length; i++){
+            var ho_h=document.getElementsByClassName('singer_l')[i].offsetTop;
+            this.height_l.push(ho_h-ho_h_z)
+          }
+        }
+        var y=this.$refs.singers.scrollTop;
+        for(var index in this.height_l){
+          if(this.height_l[index]>y){
+            this.change_a(index==this.height_l.length-1?index:index-1,true)
+            break;
+          }
+        }
+      }
+```
