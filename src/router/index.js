@@ -26,7 +26,7 @@ export default new Router({
       path :'/singer',
       component:singer,
       children:[
-        {path:'detail',component:singer_d}
+        {path:'detail',name:'s_detail',component:singer_d}
       ]
     },
     {

@@ -58,6 +58,7 @@ function param(data){
 3. 但是传递参数需要使用query，使用params不知为何取不到值
 4. `that.$router.push({path:'/preview',query:{list:list}})`
 5. `在跳转之后的路由页面使用this.$route.query.list来接收参数`
+6. `注意,push是router整个路由体制，获取是route也就是本条路由`
 
 ## 去除滚动条
 1. 谷歌`      &::-webkit-scrollbar width 0!important`
@@ -334,3 +335,23 @@ router.get('/preview',(req,res,next)=>{
         }
       }
 ```
+
+## 设置椭圆图片并解决黑边问题
+```
+      .all
+        width 100%
+        height 100%
+        /* 椭圆ellipse的x,y轴的半径
+        圆心的位置x,y坐标 ,默认是中心点
+        为了不让顶部的弧显示出来，所以我把x轴调大，其实也可以把中心点往上移，那样就可以遮住了
+        最重要的是可以在浏览器调整
+        调整策略是增加x轴(从50%开始调整)，等到弧度合适就停止
+        然后减少中心点的y轴，(从50%开始调整)，等到遮住弧度就停止*/
+        clip-path ellipse(90% 50% at 50% 30%)
+        filter blur(3px)
+        overflow hidden
+        transform scale(1.1)
+
+```
+* `由于使用了filter blur(3px)是使得图片的各个位置都多了模糊像素，所以会多出背景黑边`
+* `解决方法，让图片变大一点scale(1.1)`
