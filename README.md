@@ -355,3 +355,22 @@ router.get('/preview',(req,res,next)=>{
 ```
 * `由于使用了filter blur(3px)是使得图片的各个位置都多了模糊像素，所以会多出背景黑边`
 * `解决方法，让图片变大一点scale(1.1)`
+* `目前不知为何，如果clip-path图形下面的元素是普通定位，那么图片依旧有黑边，解决方法是设置下面的图片也是相对定位`
+
+## vuex的基本使用
+1. 创建一个store.js文件，cnpm i vuex; 导入vuex, Vue.use(vuex);
+2. const state={};const matations={};
+3. `注意mutations的函数必须都有一个参数state,该参数不用传，修改state中的数据都通过该函数`
+4. `通过this.$store.commit('',)方式来调用mutations中的函数，也可以传参`
+
+## beforeDestory周期
+```
+       // var old=this.$refs.s_detail.getAttribute('class')
+       // this.$refs.s_detail.setAttribute('class',old+' out');
+       // console.log(this.$refs.s_detail.getAttribute('class'));//s_detail out
+       // var start=new Date().getTime();
+       // while(new Date().getTime()-start<1000){
+       //   continue;
+       // }
+       // 销毁之前，虽然也能设置class类名成功，但是整个元素其实都被销毁了，添加了依旧无效阻塞主线程可以通过while()来实现，设置开始时间，如果当前时间-开始时间小于1秒则继续
+```

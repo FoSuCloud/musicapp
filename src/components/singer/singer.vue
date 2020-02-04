@@ -3,7 +3,7 @@
     <div class="singer" ref="singers" @scroll="touch_end">
       <div class="singer_l" v-for="(item,i) in hotaz" :key="i">
         <div class="s_l_box">{{i==0?'热门':item}}</div>
-          <div class="s_l_c" @click="to_detail(g_item.singer_mid,g_item.singer_pic)" v-if="g_singer_l[item]" v-for="(g_item,g_i) in g_singer_l[item]" :key="g_i">
+          <div class="s_l_c" @click="to_detail(g_item.singer_mid,g_item.singer_pic,g_item.singer_name)" v-if="g_singer_l[item]" v-for="(g_item,g_i) in g_singer_l[item]" :key="g_i">
             <img :src="g_item.singer_pic" onerror="this.src='http:\/\/y.gtimg.cn\/music\/photo_new\/T001R150x150M000001fNHEf1SFEFN.webp'">
             <span>{{g_item.singer_name}}</span>
           </div>
@@ -39,7 +39,6 @@
 
       var who=document.getElementsByClassName('vertical_l_s')[0];
       who.setAttribute('class','vertical_l_s a_active');
-
     },
     methods:{
       get_singers(){
@@ -85,8 +84,10 @@
           }
         }
       },
-      to_detail(sid,image){
-        this.$router.push({name:'s_detail',query:{sid:sid},params:{image:image}})
+      to_detail(sid,image,name){
+        this.$store.commit('change_singer_i',image)
+        this.$store.commit('change_singer_n',name)
+        this.$router.push({name:'s_detail',query:{sid:sid}})
       }
     },
     computed:{

@@ -6,6 +6,7 @@ import 'common/stylus/index.styl'
 import 'babel-polyfill'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import store from './store.js'
 
 // 设置fastclick.attach(document.body)可以让body里面的内容点击的那300毫秒延迟
 fastclick.attach(document.body)
@@ -17,10 +18,12 @@ axios.defaults.baseURL='http://192.168.1.115:3000';
 
 Vue.prototype.$axios=axios
 
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  store:store
 })

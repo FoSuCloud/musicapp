@@ -3,7 +3,7 @@
     <m-header></m-header>
     <tab></tab>
     <keep-alive>
-      <router-view></router-view>
+      <router-view ref="router_v" @touchstart="router_v_s" @touchend="router_v_end"></router-view>
     </keep-alive>
   </div>
 </template>
@@ -17,6 +17,16 @@
     components:{
        MHeader,
        Tab
+    },
+    methods:{
+      router_v_s(e){
+        var x=e.changedTouches[0].pageX;
+        console.log(x)
+      },
+      router_v_end(e){
+         var x=e.changedTouches[0].pageX;
+         console.log(x)
+      } 
     }
   }
 </script>
