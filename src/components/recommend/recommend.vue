@@ -41,11 +41,24 @@
       this.getRecommend();
       this.getmusicdetail()
     },
+    beforeMount(){
+      console.log("组件beforemount")
+    },
+    props:['mt'],
     mounted(){
+      console.log("组件mount")
       var y =this.$refs.recommend.getBoundingClientRect().y;
+      // 因为设置为fixed定位了，所以需要获取的y坐标其实是无效的，也就是0
       this.$refs.recommend.setAttribute('style',`height:calc(100vh - ${y}px)`)
       // 初始化懒加载
       this.init_lazy()
+    },
+    watch:{
+      mt(val){
+        if(val!=0){
+          this.$refs.recommend.setAttribute('style',`height:calc(100vh - ${val}px)`)
+        }
+      }
     },
     components:{
       slider,

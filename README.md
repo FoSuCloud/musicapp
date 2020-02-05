@@ -374,3 +374,42 @@ router.get('/preview',(req,res,next)=>{
        // }
        // 销毁之前，虽然也能设置class类名成功，但是整个元素其实都被销毁了，添加了依旧无效阻塞主线程可以通过while()来实现，设置开始时间，如果当前时间-开始时间小于1秒则继续
 ```
+
+## 由于页面的组件先进入mount周期，然后页面再进入所以需要传值就需要监听变化
+
+## 监听手机端物理返回键
+```
+      // 监听物理返回键
+      var that=this;
+      window.addEventListener("popstate", function(e) {
+        that.$emit('destroy')
+        console.log("返回键")
+      }, false);
+```
+
+## 但是监听到的只是浏览器的返回键
+1. 如果是在hbuilder中打包的vue单页面应用，那么点击返回键返回的还是桌面
+2. 试了监听的方式并无多大作用，然后尝试mui框架的back监听方式，明天再测试。。
+
+## 监听触摸移动事件实现左右页面滑动
+```
+      // 监听触摸移动事件
+      var move_x=e.changedTouches[0].pageX;
+      var move_y=e.changedTouches[0].pageY;
+      var del=move_x-this.start_x;
+      var del_y=move_y-this.start_y;
+      var mar_l=this.index*100;
+      // 防止页面抖动
+      if(Math.abs(del_y)<20&&Math.abs(del)>10){
+        if(del<0&&this.index<3){
+          this.$refs.router_v.style.marginLeft=`calc( -${mar_l}vw + ${del}px)`
+        }else if(del>0&&this.index>0){
+          this.$refs.router_v.style.marginLeft=`calc( -${mar_l}vw + ${del}px)`
+        }
+      }
+```
+
+## 在router-link中想要添加点击事件
+1. `          <router-link tag="div" :to="{'name':'s_detail','query':{'sid':g_item.singer_mid}}" class="s_l_c" @click.native="to_detail(g_item.singer_mid,g_item.singer_pic,g_item.singer_name)" v-if="g_singer_l[item]" v-for="(g_item,g_i) in g_singer_l[item]" :key="g_i">`
+2. 使用`@click.native也就可以让父组件在子组件上监听自己的click`
+3. 如果不添加.native,那么父组件添加的点击事件无效

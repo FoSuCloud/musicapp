@@ -38,10 +38,12 @@
         this.p_show=!this.p_show
       },
       touchstart(e){
+        e.cancelBubble=true;
         this.touch_start=e.changedTouches[0].pageX
       },
       touchend(i){
         var e=event;
+        e.cancelBubble=true;
         var end_x=e.changedTouches[0].pageX;
         let width=this.$refs.slider.offsetWidth;
         if(end_x-this.touch_start>50){

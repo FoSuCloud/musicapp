@@ -1,22 +1,24 @@
 <template>
-  <div class="singer_all">
+  <div class="singer_all" ref="sin_all">
     <div class="singer" ref="singers" @scroll="touch_end">
       <div class="singer_l" v-for="(item,i) in hotaz" :key="i">
         <div class="s_l_box">{{i==0?'热门':item}}</div>
-          <div class="s_l_c" @click="to_detail(g_item.singer_mid,g_item.singer_pic,g_item.singer_name)" v-if="g_singer_l[item]" v-for="(g_item,g_i) in g_singer_l[item]" :key="g_i">
+          <router-link tag="div" :to="{'name':'s_detail','query':{'sid':g_item.singer_mid}}" class="s_l_c" @click.native="to_detail(g_item.singer_mid,g_item.singer_pic,g_item.singer_name)" v-if="g_singer_l[item]" v-for="(g_item,g_i) in g_singer_l[item]" :key="g_i">
             <img :src="g_item.singer_pic" onerror="this.src='http:\/\/y.gtimg.cn\/music\/photo_new\/T001R150x150M000001fNHEf1SFEFN.webp'">
             <span>{{g_item.singer_name}}</span>
-          </div>
-      </div>
-      <div class="vertical_l" ref="vertical_l">
-        <span class="vertical_l_s" v-for="(item,i) in hotaz" :key="i"  @click="change_a(i)">{{item}}</span>
+          </router-link>
       </div>
     </div>
+    <div class="vertical_l" ref="vertical_l">
+      <span class="vertical_l_s" v-for="(item,i) in hotaz" :key="i"  @click="change_a(i)">{{item}}</span>
+    </div>
     <router-view></router-view>
+    <!-- <detail v-if="g_detail_show" @destroy="detail_destroy"></detail> -->
   </div>
 </template>
 
 <script>
+  import detail from './detail.vue';
   export default{
     data(){
       return{
@@ -26,19 +28,9 @@
         hotaz:["热", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
       }
     },
-    mounted(){
-      var y=this.$refs.singers.getBoundingClientRect().y;
-      var height=window.innerHeight;
-      var num=height-y;
-      num=num+'px'
-      y=y+'px'
-      this.$refs.singers.setAttribute('style',`height: ${num};`)
-      this.$refs.vertical_l.setAttribute('style','top:calc(('+num+' - 29rem) / 2 + '+y+')')
-      this.get_singers();
-
-
-      var who=document.getElementsByClassName('vertical_l_s')[0];
-      who.setAttribute('class','vertical_l_s a_active');
+    props:['mt'],
+    components:{
+      detail
     },
     methods:{
       get_singers(){
@@ -85,14 +77,36 @@
         }
       },
       to_detail(sid,image,name){
+        console.log("detail进入")
         this.$store.commit('change_singer_i',image)
         this.$store.commit('change_singer_n',name)
-        this.$router.push({name:'s_detail',query:{sid:sid}})
+        // this.$router.push({path:'/singer/detail',query:{sid:sid}})
       }
     },
     computed:{
       g_singer_l(){
         return this.singer_l;
+      },
+      g_detail_show(){
+        return this.detail_show;
+      }
+    },
+    watch:{
+      mt(val){
+        if(val!=0){
+          this.$refs.sin_all.setAttribute('style',`height:calc(100vh - ${val}px)`)
+          var y=this.$refs.singers.getBoundingClientRect().y;
+          var height=window.innerHeight;
+          var num=height-y;
+          num=num+'px'
+          y=y+'px'
+          this.$refs.singers.setAttribute('style',`height: ${num};`)
+          // this.$refs.vertical_l.setAttribute('style','top:calc(('+num+' - 29rem) / 2 + '+y+')')
+          this.get_singers();
+
+          var who=document.getElementsByClassName('vertical_l_s')[0];
+          who.setAttribute('class','vertical_l_s a_active');
+        }
       }
     }
   }
@@ -100,8 +114,13 @@
 
 <style scoped lang="stylus" rel="sheetsheet/stylus">
   @import '../../common/stylus/variable'
+.singer_all
+  width 100vw
+  overflow hidden
+  position relative
   .singer
     overflow scroll
+    position relative
     .singer_l
       .s_l_box
         background $color-highlight-background
@@ -126,23 +145,24 @@
           color $color-text-background
         &:last-child
           padding-bottom 1rem
-    .vertical_l
-      position fixed
-      right 0
-      bottom 0
-      top 0
-      height 27rem
-      padding 1rem 0
-      background $color-highlight-background
-      width 1.5rem
-      text-align center
-      font-size 0
-      span
-        display block
-        line-height 1rem
-        font-size $font-size-small
-        color $color-text-background
-      .a_active
-        color $color-theme
-        font-size $font-size-medium
+  .vertical_l
+    position absolute
+    right 0
+    bottom 0
+    top 0
+    height 27rem
+    padding 1rem 0
+    background $color-highlight-background
+    width 1.5rem
+    text-align center
+    font-size 0
+    margin auto
+    span
+      display block
+      line-height 1rem
+      font-size $font-size-small
+      color $color-text-background
+    .a_active
+      color $color-theme
+      font-size $font-size-medium
 </style>

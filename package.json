@@ -19,6 +19,7 @@
     "jsonp": "^0.2.1",
     "stylus": "^0.54.7",
     "vue": "^2.5.2",
+    "vue-awesome-mui": "^1.7.3",
     "vue-axios": "^2.1.4",
     "vue-router": "^3.0.1",
     "vue-style-loader": "^3.1.2"

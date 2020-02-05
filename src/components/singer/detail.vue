@@ -13,6 +13,9 @@
        </div>
        <loading v-if="g_loading_show"></loading>
      </div>
+     <!-- <div class="back_box">
+       
+     </div> -->
    </div>
 </template>
 
@@ -48,13 +51,7 @@
             this.get_detail()
           }
       },
-      befo_en(){
-        this.$nextTick(()=>{
-          console.log("进入之前")
-        })
-      },
       destory_c(){
-        console.log("点击返回")
         var old=this.$refs.s_detail.getAttribute('class')
         this.$refs.s_detail.setAttribute('class',old+' out')
         // 延时1s返回上个页面
@@ -86,6 +83,14 @@
             },500)
           }
         })
+      },
+      //首页返回键处理
+      back(){
+        // //处理逻辑：1秒内，连续两次按返回键，则退出应用；
+        var first = null;
+        this.$mui.back = function() {
+          this.destory_c();
+        }
       }
     },
     computed:{
@@ -94,10 +99,12 @@
       }
     },
     mounted(){
+      // 监听物理返回键
+      this.back();
+
       this.sid=this.$route.query.sid
       this.image=this.$store.state.singer_img
       this.singer_name=this.$store.state.singer_name
-      console.log(this.singer_name)
       this.get_detail()
       let y=this.$refs.song_list.getBoundingClientRect().y;
       var height=window.innerHeight;
@@ -170,7 +177,7 @@
         margin auto
         top 0.8rem
         font-size $font-size-large
-        color $color-background
+        color #fff
         text-align center
     .song_list
       padding 1rem

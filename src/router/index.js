@@ -8,6 +8,12 @@ import recommend from 'components/recommend/recommend'
 import preview from 'components/subcomponents/preview'
 Vue.use(Router)
 
+// const originalPush = Router.prototype.push
+// Router.prototype.push = function push(location) {
+//   return originalPush.call(this, location).catch(err => err)
+// }
+
+
 export default new Router({
   routes: [
     {
@@ -32,11 +38,6 @@ export default new Router({
     {
       path :'/recommend',
       component:recommend
-    },
-    // 预览图片
-    {
-      path:'/preview',
-      component:preview
     }
   ]
 })

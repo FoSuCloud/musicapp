@@ -7,5 +7,7 @@
 <script>
 </script>
 
-<style>
+<style scoped lang="stylus" rel="sheetsheet/stylus">
+  .search 
+    width 100vw
 </style>

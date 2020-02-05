@@ -7,6 +7,7 @@ import 'babel-polyfill'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from './store.js'
+import Mui from 'vue-awesome-mui';
 
 // 设置fastclick.attach(document.body)可以让body里面的内容点击的那300毫秒延迟
 fastclick.attach(document.body)
@@ -17,6 +18,13 @@ Vue.use({axios, VueAxios});
 axios.defaults.baseURL='http://192.168.1.115:3000';
 
 Vue.prototype.$axios=axios
+
+Vue.use(Mui);
+mui.init({
+  keyEventBind: {
+    backbutton: true //关闭back按键监听
+  }
+});
 
 
 /* eslint-disable no-new */
