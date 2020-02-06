@@ -20,12 +20,36 @@ axios.defaults.baseURL='http://192.168.1.115:3000';
 Vue.prototype.$axios=axios
 
 Vue.use(Mui);
+Vue.prototype.$mui=Mui
 mui.init({
   keyEventBind: {
-    backbutton: true //关闭back按键监听
+    backbutton: true //开启back按键监听
   }
 });
 
+var first=null;
+var router_list=[null,'recommend','singer','rank','search']
+
+mui.back = function() {
+    //首次按键，提示 再按一次退出应用
+    if (!first) {
+      first = new Date().getTime(); //记录第一次按下回退键的时间
+      if(router_list.indexOf(router.history.current.name)!=-1){
+        mui.toast("再按一次退出应用"); //判断首页给出提示
+      }else{
+        store.commit('change_router_p',router.history.current.name);
+      }
+      setTimeout(function() {
+        //1s中后清除
+        first = null;
+      }, 1000);
+    } else {
+      if (new Date().getTime() - first < 1000) {
+        //如果两次按下的时间小于1s，
+        plus.runtime.quit(); //那么就退出app
+      }
+    }
+}
 
 /* eslint-disable no-new */
 new Vue({

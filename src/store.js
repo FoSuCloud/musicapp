@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 const state={
   singer_img:'',
-  singer_name:''
+  singer_name:'',
+  router_path:''
 }
 
 const mutations={
@@ -14,6 +15,9 @@ const mutations={
   },
   change_singer_n(state,singer_name){
     state.singer_name=singer_name;
+  },
+  change_router_p(state,router_path){
+    state.router_path=router_path;
   }
 }
 

@@ -413,3 +413,54 @@ router.get('/preview',(req,res,next)=>{
 1. `          <router-link tag="div" :to="{'name':'s_detail','query':{'sid':g_item.singer_mid}}" class="s_l_c" @click.native="to_detail(g_item.singer_mid,g_item.singer_pic,g_item.singer_name)" v-if="g_singer_l[item]" v-for="(g_item,g_i) in g_singer_l[item]" :key="g_i">`
 2. 使用`@click.native也就可以让父组件在子组件上监听自己的click`
 3. 如果不添加.native,那么父组件添加的点击事件无效
+
+## hbuilder的云打包次数有限制
+1. 所以使用本地打包
+2. [参考](https://ask.dcloud.net.cn/article/508)
+3. 根据教程做完后，替换掉index.html,然后创建static，更新该文件夹就可以了
+
+## 物理返回键监听折腾那么久。。
+1. 重点在于，直接在main.js中定义所有页面的init,back,注意区分首页
+2. 首页的四个路由额外多出一个提示mui.toast，提示退出程序
+3. 当监听到页面的返回键的时候，啥都别做，只去改变vuex的一个参数，然后各个页面分别watch '$store.state.path'
+4. 注意的是，在页面路由判断中，main.js没有本条路由，只有路由体制，所以判断当前路由使用router.history.current.name就可以获取路由的名字
+```
+Vue.use(Mui);
+Vue.prototype.$mui=Mui
+mui.init({
+  keyEventBind: {
+    backbutton: true //开启back按键监听
+  }
+});
+
+var first=null;
+var router_list=[null,'recommend','singer','rank','search']
+
+mui.back = function() {
+    //首次按键，提示 再按一次退出应用
+    if (!first) {
+      first = new Date().getTime(); //记录第一次按下回退键的时间
+      if(router_list.indexOf(router.history.current.name)!=-1){
+        mui.toast("再按一次退出应用"); //判断首页给出提示
+      }else{
+        store.commit('change_router_p',router.history.current.name);
+      }
+      setTimeout(function() {
+        //1s中后清除
+        first = null;
+      }, 1000);
+    } else {
+      if (new Date().getTime() - first < 1000) {
+        //如果两次按下的时间小于1s，
+        plus.runtime.quit(); //那么就退出app
+      }
+    }
+}
+```
+
+## router-view多级使用
+1. 不同级的router-link会填充在哪个router-view是根据to的内容
+2. '/singer/detail/song'是填充到detail的下一级
+3. '/singer/detail'就是填充到singer
+4. '/singer'就是填充到app.vue
+5. 即使app.vue存在router-view没有被填充的，但是层级不一致就不会填充这个

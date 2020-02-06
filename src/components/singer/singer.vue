@@ -77,10 +77,8 @@
         }
       },
       to_detail(sid,image,name){
-        console.log("detail进入")
         this.$store.commit('change_singer_i',image)
         this.$store.commit('change_singer_n',name)
-        // this.$router.push({path:'/singer/detail',query:{sid:sid}})
       }
     },
     computed:{

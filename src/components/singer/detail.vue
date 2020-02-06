@@ -13,9 +13,22 @@
        </div>
        <loading v-if="g_loading_show"></loading>
      </div>
-     <!-- <div class="back_box">
-       
-     </div> -->
+     <!-- 判断用户是否播放过音乐localstorage -->
+     <router-link  tag="div" to="/singer/detail/song" class="back_box" @click.native="song_detail">
+        <div class="bb_left">
+          <img src="../../common/image/default.png" alt="">
+          <div class="bb_l_t">
+            <p class="music">歌曲名称</p>
+            <p class="name">周杰伦</p>
+          </div>
+        </div>
+        <div class="bb_r">
+          <img class="play" src="../../common/image/play_music.png" alt="播放" @click="change_play">
+          <!-- <img class="play" src="../../common/image/stop_music.png" alt="停止" @click="change_play"> -->
+          <img class="music" src="../../common/image/music.png" alt="音乐">
+        </div>
+     </router-link>
+     <router-view ></router-view>
    </div>
 </template>
 
@@ -27,16 +40,31 @@
       return{
         sid:0,
         page:1,
-        image:'',
-        singer_name:'',
         song_list:[],
-        loading_show:false
+        loading_show:false,
+        play_show:true
       }
     },
     components:{
       loading
     },
+    watch:{
+      '$store.state.router_path'(val){
+        if(val==this.$route.name){
+          // 防止该值没有变化
+          this.$store.commit('change_router_p','');
+          this.destory_c();
+        }
+      }
+    },
     methods:{
+      change_play(e){
+        console.log("切换播放")
+        this.play_show=!this.play_show
+      },
+      song_detail(e){
+        e.cancelBubble=true;
+      },
       // 监听列表滚动
       song_scroll(e){
           var scroll_top=this.$refs.song_list.scrollTop;
@@ -83,28 +111,21 @@
             },500)
           }
         })
-      },
-      //首页返回键处理
-      back(){
-        // //处理逻辑：1秒内，连续两次按返回键，则退出应用；
-        var first = null;
-        this.$mui.back = function() {
-          this.destory_c();
-        }
       }
     },
     computed:{
       g_loading_show(){
         return this.loading_show
+      },
+      image(){
+        return this.$store.state.singer_img
+      },
+      singer_name(){
+        return this.$store.state.singer_name
       }
     },
     mounted(){
-      // 监听物理返回键
-      this.back();
-
       this.sid=this.$route.query.sid
-      this.image=this.$store.state.singer_img
-      this.singer_name=this.$store.state.singer_name
       this.get_detail()
       let y=this.$refs.song_list.getBoundingClientRect().y;
       var height=window.innerHeight;
@@ -197,5 +218,50 @@
         .most
           font-size $font-size-small
           color $color-dialog-background
-
+    .back_box
+      background $color-dialog-background
+      width 100vw
+      height 3rem
+      position fixed
+      bottom 0
+      left 0
+      display flex
+      align-items center
+      justify-content space-between
+      .bb_left
+        padding-left 1.5rem
+        display inline-block
+        text-align left
+        img
+          width 2.5rem
+          height 2.5rem
+          display inline-block
+          margin-right 0.5rem
+          border-radius 50%
+          vertical-align middle
+        .bb_l_t
+          display inline-block
+          vertical-align middle
+          .music
+            font-size $font-size-medium
+            color white
+            margin-bottom 0.35rem
+          .name
+            color #333
+            font-size $font-size-small-s
+      .bb_r
+        padding-right 1rem
+        display inline-block
+        text-align right
+        .play
+          width 1.8rem
+          height 1.8rem
+          display inline-block
+          margin-right 0.3rem
+          vertical-align middle
+        .music
+          width 2rem
+          height 2rem
+          vertical-align middle
+          display inline-block
 </style>
