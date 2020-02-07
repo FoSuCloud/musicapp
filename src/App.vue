@@ -10,7 +10,6 @@
       <rank :mt="mt"></rank>
       <search :mt="mt"></search>
     </div>
-    <router-view></router-view>
   </div>
 </template>
 
@@ -45,7 +44,6 @@
       var y=this.$refs.fix.scrollHeight;
       this.mt=y;
       this.$refs.router_v.setAttribute('style',`margin-top:${y}px`);
-      this.back();
 
       var that=this;
       window.addEventListener('popstate',()=>{
@@ -65,32 +63,8 @@
             break;
         }
       },false)
-
     },
     methods:{
-      //首页返回键处理
-      back(){
-        // //处理逻辑：1秒内，连续两次按返回键，则退出应用；
-        // var first = null;
-        // this.$mui.back = function() {
-        //   //首次按键，提示 再按一次退出应用
-        //   if (!first) {
-        //     first = new Date().getTime(); //记录第一次按下回退键的时间
-        //     this.$mui.toast("再按一次退出应用"); //给出提示
-        //     setTimeout(function() {
-        //       //1s中后清除
-        //       first = null;
-        //     }, 1000);
-        //   } else {
-        //     if (new Date().getTime() - first < 1000) {
-        //       //如果两次按下的时间小于1s，
-        //       plus.runtime.quit(); //那么就退出app
-        //     }
-        //     // 告诉页面回退
-        //   }
-        // }
-          console.log('back')
-      },
       g_num(data){
         this.index=data;
         this.$refs.router_v.style.marginLeft=`-${this.index*100}vw`

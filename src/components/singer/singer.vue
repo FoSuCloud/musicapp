@@ -13,7 +13,6 @@
       <span class="vertical_l_s" v-for="(item,i) in hotaz" :key="i"  @click="change_a(i)">{{item}}</span>
     </div>
     <router-view></router-view>
-    <!-- <detail v-if="g_detail_show" @destroy="detail_destroy"></detail> -->
   </div>
 </template>
 

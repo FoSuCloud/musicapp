@@ -1,28 +1,43 @@
 <template>
   <div class="tab">
-    <router-link  tag="div" class="tab-item" to="/recommend">
-        <span class="tab-link" @click="get_num(0)">推荐</span>
-    </router-link>
-    <router-link  tag="div" class="tab-item" to="/singer">
-        <span class="tab-link" @click="get_num(1)">歌手</span>
-    </router-link>
-    <router-link  tag="div" class="tab-item" to="/rank">
-        <span class="tab-link" @click="get_num(2)">排行</span>
-    </router-link>
-    <router-link  tag="div" class="tab-item" to="/search">
-        <span class="tab-link" @click="get_num(3)">搜索</span>
-    </router-link>
+    <div class="tab-item" @click="get_num(0)" :class="click_index==0?' div-active':''" >
+        <span class="tab-link" >推荐</span>
+    </div>
+    <div class="tab-item" @click="get_num(1)" :class="click_index==1?' div-active':''">
+        <span class="tab-link">歌手</span>
+    </div>
+    <div class="tab-item" @click="get_num(2)" :class="click_index==2?' div-active':''" >
+        <span class="tab-link">排行</span>
+    </div>
+    <div class="tab-item" @click="get_num(3)" :class="click_index==3?' div-active':''" >
+        <span class="tab-link" >搜索</span>
+    </div>
   </div>
 </template>
 
 <script>
   export default{
     data(){
-      return{}
+      return{
+      }
     },
     props:['click_index'],
     methods:{
       get_num(i){
+        switch(i){
+          case 0:
+            this.$router.push('/recommend')
+            break;
+          case 1:
+            this.$router.push('/singer')
+            break;
+          case 2:
+            this.$router.push('/rank')
+            break;
+          case 3:
+            this.$router.push('/search')
+            break;
+        }
         this.$emit('get_num',i)
       }
     },
@@ -47,7 +62,7 @@
       text-align:center
       padding-bottom:10px
       font-size:$font-size-small
-      &.router-link-active
+      &.div-active
         font-size:$font-size-medium
         .tab-link
           color:$color-theme
