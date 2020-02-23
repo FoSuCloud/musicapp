@@ -47,7 +47,6 @@
 
       var that=this;
       window.addEventListener('popstate',()=>{
-        console.log("监听浏览器路由变化")
         switch(this.$route.path){
           case '/recommend':
             this.g_num(0)
@@ -76,9 +75,24 @@
         this.start_x=x;
         this.start_y=y;
       },
+      // 监听是否需要换屏
+      switch_or(){
+        if(this.$route.path=='/recommend'||
+        this.$route.path=='/singer'||
+        this.$route.path=='/rank'||
+        this.$route.path=='/search'){
+          return true;
+        }
+        return false
+      },
       router_v_end(e){
          var x=e.changedTouches[0].pageX;
          var del=this.start_x-x;
+         // 如果不是当前页面就不要换屏
+         if(!this.switch_or()){
+           return;
+         }
+         
          if(del>100){
            if(this.index<3){
              this.index++;
@@ -88,11 +102,14 @@
              this.index--;
            }
          }
-         console.log("end")
          this.g_num(this.index);
       },
       // 监听触摸移动事件
       router_move(e){
+        // 如果不是当前页面就不要换屏
+        if(!this.switch_or()){
+          return;
+        }
         var move_x=e.changedTouches[0].pageX;
         var move_y=e.changedTouches[0].pageY;
         var del=move_x-this.start_x;

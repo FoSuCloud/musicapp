@@ -52,6 +52,8 @@ module.exports = {
     'eol-last':0,
     'one-var':0,
     'no-unused-expressions':0,
-    'no-irregular-whitespace':0
+    'no-irregular-whitespace':0,
+    'no-constant-condition':0,
+    'no-multi-spaces':0
   }
 }

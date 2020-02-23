@@ -25,5 +25,9 @@
         height:2.5rem
       .header-text
         font-size:$font-size-medium-x
-        color:$color-theme
+        // color $color-theme
+        color:transparent
+        background url('../../common/image/default.png') no-repeat 20% 75%
+        // background-clip padding-box
+        -webkit-background-clip text
 </style>

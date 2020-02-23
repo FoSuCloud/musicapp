@@ -464,3 +464,17 @@ mui.back = function() {
 3. '/singer/detail'就是填充到singer
 4. '/singer'就是填充到app.vue
 5. 即使app.vue存在router-view没有被填充的，但是层级不一致就不会填充这个
+
+## -webkit-background-clip属性设置文字渐变色
+1. `首先设置背景图片，注意背景图要设置宽高background-size来调整`
+2. `然后设置-webkit-background-clip:text;切割范围是文字`
+3. `注意!!!有一张图片只在background中用到，然后打包的时候就额外打包了，不知道是什么策略`
+4. `但是后果就是-webkit-background-clip没有生效，因为找不到这张图片，所以我还是用了default.png,没用text.png`
+
+## 音乐的播放mp3数据获取
+1. [参考](https://segmentfault.com/q/1010000012698827/a-1020000012700711)
+2. 注意:`pc端抓不到包就去移动端抓，关键点在于vkey的获取`
+
+## audio标签
+1. oncanplay的时候才能去获取duration，否则获取到的就是NaN
+2. `但是实际监听播放时间变化还是要用addEventListener('timeupdate')`

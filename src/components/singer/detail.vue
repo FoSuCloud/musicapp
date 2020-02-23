@@ -6,26 +6,25 @@
        <img class="icon" src="../../common/image/l_angle.png" alt="返回" @click="destory_c">
        <span class="name">{{singer_name}}</span>
      </div>
-     <div class="song_list" ref="song_list" @scroll="song_scroll">
-       <div class="s_list_c" v-for="(s_item,index) in song_list" :key="index">
+     <div class="song_list"  ref="song_list" @scroll="song_scroll">
+       <router-link class="s_list_c" tag="div" to="/singer/detail/song" @click.native="song_detail(s_item.songInfo.id,s_item.songInfo.mid)" v-for="(s_item,index) in song_list" :key="index">
          <p class="name">{{s_item.songInfo.name}}</p>
          <p class="most">{{singer_name}}·{{s_item.songInfo.album.name}}</p>
-       </div>
+       </router-link>
        <loading v-if="g_loading_show"></loading>
      </div>
      <!-- 判断用户是否播放过音乐localstorage -->
-     <router-link  tag="div" to="/singer/detail/song" class="back_box" @click.native="song_detail">
+     <router-link v-if="g_has_song"  tag="div" to="/singer/detail/song" class="back_box" @click.native="song_detail">
         <div class="bb_left">
-          <img src="../../common/image/default.png" alt="">
+          <img :src="s_picurl" alt="歌曲图">
           <div class="bb_l_t">
-            <p class="music">歌曲名称</p>
-            <p class="name">周杰伦</p>
+            <p class="music">{{g_s_name}}</p>
+            <p class="name">{{g_sin_name}}</p>
           </div>
         </div>
         <div class="bb_r">
           <img class="play" src="../../common/image/play_music.png" alt="播放" @click="change_play">
           <!-- <img class="play" src="../../common/image/stop_music.png" alt="停止" @click="change_play"> -->
-          <img class="music" src="../../common/image/music.png" alt="音乐">
         </div>
      </router-link>
      <router-view ></router-view>
@@ -42,7 +41,11 @@
         page:1,
         song_list:[],
         loading_show:false,
-        play_show:true
+        play_show:true,
+        has_song:false,
+        s_picurl:'',
+        s_name:'',
+        sin_name:''
       }
     },
     components:{
@@ -59,10 +62,17 @@
     },
     methods:{
       change_play(e){
-        console.log("切换播放")
         this.play_show=!this.play_show
       },
-      song_detail(e){
+      // 去到歌曲详情页
+      song_detail(id,mid){
+        if(id&&id>0){
+          localStorage.setItem('song_id',id)
+        }
+        if(mid){
+          localStorage.setItem('song_mid',mid)
+        }
+        var e=event;
         e.cancelBubble=true;
       },
       // 监听列表滚动
@@ -87,6 +97,7 @@
           this.$router.back();
         },1000)
       },
+      // 获取歌手详情
       get_detail(){
         var url='https://u.y.qq.com/cgi-bin/musicu.fcg';
         var obj={
@@ -102,6 +113,7 @@
           data:{"comm":{"ct":24,"cv":0},"singerSongList":{"method":"GetSingerSongList","param":{"order":1,"singerMid":this.sid,"begin":this.page,"num":10},"module":"musichall.song_list_server"}}
         }
         jsonp(url,obj).then((res)=>{
+          console.log(res)
           if(this.page==1){
             this.song_list=res.singerSongList.data.songList
           }else{
@@ -111,6 +123,26 @@
             },500)
           }
         })
+      },
+      // 获取歌曲详情(如果有)
+      get_song_d(){
+        var id=localStorage.getItem('song_id');
+        if(id>0){
+          this.$axios.get('/singers/song_d?id='+id).then((res)=>{
+            this.s_picurl=res.data.video.data.list[0].picurl
+            this.s_name=res.data.video.data.list[0].title
+            this.sin_name=res.data.video.data.list[0].singers[0].name
+            this.has_song=true;
+            this.$refs.song_list.style.marginBottom='48px'
+          })
+        }
+      }
+    },
+    // 监听更新
+    beforeUpdate(){
+      var id=localStorage.getItem('song_id');
+      if(id){
+        this.get_song_d()
       }
     },
     computed:{
@@ -122,6 +154,15 @@
       },
       singer_name(){
         return this.$store.state.singer_name
+      },
+      g_has_song(){
+        return this.has_song
+      },
+      g_s_name(){
+        return this.s_name
+      },
+      g_sin_name(){
+        return this.sin_name
       }
     },
     mounted(){
@@ -131,6 +172,8 @@
       var height=window.innerHeight;
       var num=height-y;
       this.$refs.song_list.setAttribute('style',`height:${num}px`)
+      // 判断本地是否听过歌
+      this.get_song_d();
     }
   }
 </script>
@@ -157,7 +200,7 @@
     top 0
     width 100vw
     height 100vh
-    z-index 10
+    z-index 3
     background $color-background
     animation enter 1s 1
     &.out
@@ -185,7 +228,7 @@
         border-radius 50%
       .icon
         position absolute
-        z-index 100
+        z-index 4
         top 0
         left 0
         margin 0.5rem 1rem 0.5rem 0.5rem
@@ -229,28 +272,40 @@
       align-items center
       justify-content space-between
       .bb_left
-        padding-left 1.5rem
         display inline-block
         text-align left
+        flex 1
+        display flex
+        overflow hidden
         img
           width 2.5rem
           height 2.5rem
           display inline-block
           margin-right 0.5rem
+          margin-left 1.5rem
           border-radius 50%
           vertical-align middle
         .bb_l_t
           display inline-block
           vertical-align middle
+          padding-right 1rem
+          width 60%
           .music
             font-size $font-size-medium
             color white
-            margin-bottom 0.35rem
+            margin 0.35rem 0
+            height 1rem
+            text-overflow ellipsis
+            overflow hidden
+            white-space nowrap
           .name
             color #333
             font-size $font-size-small-s
+            text-overflow ellipsis
+            overflow hidden
+            white-space nowrap
       .bb_r
-        padding-right 1rem
+        margin-right 1rem
         display inline-block
         text-align right
         .play
@@ -259,9 +314,4 @@
           display inline-block
           margin-right 0.3rem
           vertical-align middle
-        .music
-          width 2rem
-          height 2rem
-          vertical-align middle
-          display inline-block
 </style>

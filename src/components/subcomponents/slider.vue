@@ -64,16 +64,19 @@
       autoplay(index){
          let i=index?index:0;
          let width=this.$refs.slider.offsetWidth;
-         var timer=setInterval(()=>{
-           this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
-           i++;
-           this.now_num=i-1;
-           //重新开始
-           if(i==this.list.length){
-             i=0;
-           }
-         },this.interval*1000)
-         this.timer=timer;
+         console.log(width)
+         if(width>0){
+           var timer=setInterval(()=>{
+             this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
+             i++;
+             this.now_num=i-1;
+             //重新开始
+             if(i==this.list.length){
+               i=0;
+             }
+           },this.interval*1000)
+           this.timer=timer;
+         }
       },
       // 显示预览图
       preimg(i){
