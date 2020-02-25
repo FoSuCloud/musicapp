@@ -1,6 +1,6 @@
 <template>
   <div class="song" ref="song_all">
-    <audio ref="myaudio" autoplay="true" :src="g_audio"  preload="load"></audio>
+    <audio ref="myaudio" id="auid" @canplay="togglePlaying(1)" :src="g_audio"  preload="load"></audio>
     <i class="icon-back" @click="destory_c"></i>
     <div class="song_one">
       <p class="name">{{s_name}}</p>
@@ -16,6 +16,7 @@
           </div>
           <!-- 歌词 -->
           <div class="word" ref="songw">
+            <p v-for="(item,i) in songword" :key="i" class="word_p" :class="songlight==i?'active':''">{{item.text==''?'\n':item.text}}</p>
           </div>
         </div>
         <img :src="s_picurl" alt="歌曲背景" class="big">
@@ -23,6 +24,8 @@
           <span :class="word_show?'':'active'"></span>
           <span :class="word_show?'active':''"></span>
         </div>
+        <!-- 进度条组件,不要写progress,progress是h5标签 -->
+        <progres @pose="pose"></progres>
         <div class="operators">
           <div class="icon i-left" @click="changeMode">
             <i class="icon-loop"></i>
@@ -47,6 +50,8 @@
 
 <script>
   import jsonp from '../../common/js/jsonp.js'
+  import progres from '../subcomponents/progress.vue'
+  import {formattime} from '../../common/js/util.js'
   export default {
     data(){
       return{
@@ -59,11 +64,17 @@
         s_name:'',
         sin_name:'',
         vkey:'',
-        play:true  ,// 是否播放
+        play:false  ,// 是否播放
         word_show:false  ,//是否切换到歌词
         touch_s:0,
-        songword:''  //歌词
+        songword:''  ,//歌词
+        songlight:0  ,//歌词索引
+        duration:0   ,//歌曲总时间
+        current:0   //当前播放时间
       }
+    },
+    components:{
+      progres
     },
     watch:{
       '$store.state.router_path'(val){
@@ -113,27 +124,25 @@
         // 需要把特殊编码解析一下，使用innerHtml
         var one=document.createElement("span");
         one.innerHTML=data
-        this.songword=one.innerHTML
         // 重组织数据结构
-        var arr=this.songword.split('\n');
+        var arr=one.innerHTML.split('\n');
         for(var key=0; key<arr.length; key++){
           var i=arr[key].indexOf('[00:');
-          console.log(arr[key])
           if(i!=-1){
-            // 把第一句(歌曲名 作者名去掉),还是不去掉
             arr=arr.slice(key);
             break;
           }
         }
+        // 传递歌曲时间(调用子组件的方法)
+        this.$children[0].gettime('0:00',arr[arr.length-1].split(']')[0].replace('[',''))
         // 组织成数组
         var n_arr=[]
         arr.forEach((item)=>{
           var time=item.split(']')[0].replace('[','')
           var text=item.split(']')[1]
-          n_arr.push({time:time,text:text.trim()})
+          n_arr.push({time:formattime(time),text:text.trim()})
         })
-        console.log(n_arr)
-        this.$refs.songw.innerHTML=this.songword;
+        this.songword=n_arr;
       },
       // 获取歌曲vkey,使用mid
       getSongVkey() {
@@ -153,16 +162,22 @@
         })
         jsonp(url, data).then((res)=>{
           this.vkey=res.data.items[0].vkey
-          this.togglePlaying(1)
         })
       },
       // 控制歌曲进度条
       song_play(){
         var audio=this.$refs.myaudio;
         var that=this;
+        // 歌词第一条前半部分为空白
+        var fa=document.getElementsByClassName('word')[0]
+        var first=document.getElementsByClassName('word_p')[0]
+        var half=fa.offsetHeight/2
+        first.setAttribute('style',`margin-top:${half}px;`);
         // oncanplay的时候才能去获取duration，否则获取到的就是NaN
         audio.addEventListener('timeupdate',function(){
           var ra=audio.currentTime/audio.duration;
+          that.duration=audio.duration
+          that.current=audio.currentTime
           var angle=ra*360;// 角度
           if(angle<180){
             that.$refs.right.style.transform=`rotate(${angle}deg)`
@@ -170,6 +185,26 @@
             that.$refs.right.style.transform=`rotate(0deg)`
             that.$refs.left.style.background=`linear-gradient(45deg,#ffcd32,#d93f30)`
             that.$refs.left.style.transform=`rotate(${angle-180}deg)`
+            // 切换播放是否,但是目前还未有下一首的选项
+            if(audio.currentTime>=audio.duration){
+              that.play=!that.play
+              that.$refs.right.style.transform=`rotate(0deg)`
+              that.$refs.left.style.background=`white`
+              that.$refs.left.style.transform=`rotate(0deg)`
+            }
+          }
+          // 修改歌词亮度
+          for(var i=0; i<that.songword.length; i++){
+            if(that.songword[i].time>audio.currentTime||i==that.songword.length-1){
+              if(that.songword[i-1].text==""||audio.currentTime>that.songword[that.songword.length-1].time){
+                that.songlight=i;
+              }else{
+                that.songlight=i-1;
+              }
+              var obj=document.getElementsByClassName('word_p')[that.songlight];
+              fa.scrollTop=obj.offsetTop-half
+              break;
+            }
           }
         })
       },
@@ -181,7 +216,6 @@
       rotate_end(e){
         var touch_e=e.changedTouches[0].pageX;
         if((touch_e-this.touch_s>50&&this.word_show)||(touch_e-this.touch_s<-50&&!this.word_show)){
-          console.log("切换歌词")
           this.word_show=!this.word_show;
           if(this.word_show){
             this.$refs.margin_word.style.marginLeft='-100vw'
@@ -196,13 +230,19 @@
       prev(){
         console.log('1')
       },
+      pose(per){
+        var audio=this.$refs.myaudio;
+        var auid=document.getElementById('auid')
+        audio.currentTime =audio.duration*parseInt(per)/100;
+        this.togglePlaying()
+      },
       // 切换播放与暂停
       togglePlaying(flag){
-        if(flag!=1){
-          this.play=!this.play
-        }
+        this.play=!this.play
         if(this.play){
           this.$refs.myaudio.play()
+          // 控制进度条播放
+          this.$children[0].play(0);
           if(this.$refs.rotate_r.style['animationPlayState']=='paused'){
             this.$refs.rotate_r.setAttribute('style','animation-play-state:running')
           }
@@ -211,6 +251,8 @@
           }
         }else{
           this.$refs.myaudio.pause()
+          // 控制进度条停止
+          this.$children[0].play(1);
           // 取消旋转
           this.$refs.rotate_r.setAttribute('style','animation-play-state:paused')
         }
@@ -292,10 +334,16 @@
             top 0
             height 100%
             width 100vw
-            overflow hidden
+            overflow-y scroll
             box-sizing border-box
             padding 1rem
             margin-top -1.5rem
+            p
+              margin-bottom 1rem
+              color lightgray
+              white-space pre-wrap
+              &.active
+                color white
           .rorate_s
             position absolute
             left 0

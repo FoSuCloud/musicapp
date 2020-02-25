@@ -478,3 +478,6 @@ mui.back = function() {
 ## audio标签
 1. oncanplay的时候才能去获取duration，否则获取到的就是NaN
 2. `但是实际监听播放时间变化还是要用addEventListener('timeupdate')`
+
+## progress标签
+1. 进度条组件,不要写progress,progress是h5标签

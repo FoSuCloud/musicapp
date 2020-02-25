@@ -32,3 +32,10 @@ function transformArrayBufferToBase64 (buffer) {
     }
     return window.btoa(binary);
 }
+
+// 分:秒:毫秒转换为时间戳
+export function formattime(time){
+  var arr=time.split(':');
+  var a_time=arr[0]*60+Number(arr[1]);
+  return a_time
+}
