@@ -4,7 +4,7 @@
       <div class="slider_l" ref="slider">
           <div v-for="(item,i) in list" class="sli_i" :key="i">
             <img :src="item.picurl" :alt="item.mvtitle" @click="preimg(i)"
-            @touchstart="touchstart" @touchend="touchend(i)">
+            @touchstart="touchstart" @touchend="touchend">
           </div>
       </div>
       <div class="dot">
@@ -25,7 +25,8 @@
         p_show:false,
         touch_start:'',
         timer:'',
-        now_num:0
+        now_num:0,
+        clear:false
       }
     },
     components:{
@@ -41,41 +42,44 @@
         e.cancelBubble=true;
         this.touch_start=e.changedTouches[0].pageX
       },
-      touchend(i){
+      touchend(){
         var e=event;
         e.cancelBubble=true;
         var end_x=e.changedTouches[0].pageX;
         let width=this.$refs.slider.offsetWidth;
-        if(end_x-this.touch_start>50){
-          i--;
-          this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
-          clearInterval(this.timer)
-          this.now_num=i;
-          this.autoplay(i)
-        }else if(end_x-this.touch_start<-50){
-          i++;
-          this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
-          this.now_num=i;
-          clearInterval(this.timer)
-          this.autoplay(i)
+        if(end_x-this.touch_start>50&&this.now_num>0){
+          this.clear=true;
+          this.now_num--;
+          this.$refs.slider.setAttribute('style',`transform:translate(${-width*this.now_num}px,0px)`)
+          setTimeout(()=>{
+            this.autoplay()
+          },0)
+        }else if(end_x-this.touch_start<-50&&this.now_num<3){
+          this.clear=true;
+          this.now_num++;
+          this.$refs.slider.setAttribute('style',`transform:translate(${-width*this.now_num}px,0px)`)
+          setTimeout(()=>{
+            this.autoplay()
+          },0)
         }
       },
       // 自动开始轮播
-      autoplay(index){
-         let i=index?index:0;
+      autoplay(){
          let width=this.$refs.slider.offsetWidth;
-         console.log(width)
          if(width>0){
            var timer=setInterval(()=>{
-             this.$refs.slider.setAttribute('style',`transform:translate(${-width*i}px,0px)`)
-             i++;
-             this.now_num=i-1;
-             //重新开始
-             if(i==this.list.length){
-               i=0;
+             if(this.clear){
+               clearInterval(timer)
+             }else{
+               this.now_num++;
+               //重新开始
+               if(this.now_num==this.list.length){
+                 this.now_num=0;
+               }
+               this.$refs.slider.setAttribute('style',`transform:translate(${-width*this.now_num}px,0px)`)
              }
+             this.clear=false;
            },this.interval*1000)
-           this.timer=timer;
          }
       },
       // 显示预览图

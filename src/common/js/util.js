@@ -5,7 +5,7 @@ export function preimg(that,list){
 }
 //下载图片地址和图片名
 export function downloadIamge(imgsrc, name) {
-  var newImgsrc = 'http://192.168.1.115:3000/imgs/preview?src=' + imgsrc;
+  var newImgsrc = 'http://106.14.210.52:3389/imgs/preview?src=' + imgsrc;
   var xhr = new XMLHttpRequest();
   xhr.open('GET', newImgsrc, true);
   xhr.responseType = 'arraybuffer';

@@ -113,5 +113,6 @@
       text-align center
       font-size 20px
       z-index 8
-      color white
+      color rgba(190,190,200,0.6)
+      margin-top 5px
 </style>

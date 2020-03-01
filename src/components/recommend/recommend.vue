@@ -2,7 +2,7 @@
   <div class="recommend" ref="recommend" @touchmove="rem_move"
   @touchstart="rem_start" @touchend="rem_end">
     <light v-if="g_light_s"></light>
-    <slider :list="list" :interval="3" ></slider>
+    <slider :list="list" :interval="1" ></slider>
     <p class="rem_p">热门歌单推荐</p>
     <div class="rem_list" ref="remlist" @touchmove="list_move">
       <div class="rem_i" v-for="(item,index) in g_rem_list" :key="index">
@@ -41,12 +41,9 @@
       this.getRecommend();
       this.getmusicdetail()
     },
-    beforeMount(){
-      console.log("组件beforemount")
-    },
     props:['mt'],
     mounted(){
-      console.log("组件mount")
+      console.log("组件mount",this.$route.path)
       var y =this.$refs.recommend.getBoundingClientRect().y;
       // 因为设置为fixed定位了，所以需要获取的y坐标其实是无效的，也就是0
       this.$refs.recommend.setAttribute('style',`height:calc(100vh - ${y}px)`)
@@ -74,7 +71,7 @@
       },
       // 获取推荐歌单
       getmusicdetail(){
-        this.$axios.get('/index/remList?page='+this.page).then((res)=>{
+        this.$axios.get('/index/remlist?page='+this.page).then((res)=>{
           // 取消上拉加载,下拉刷新,但是为了能够显示，所以至少显示0.5秒
           setTimeout(()=>{
             this.loading_show=false;
@@ -178,6 +175,7 @@
   @import '../../common/stylus/variable'
 .recommend
   overflow scroll
+  &::-webkit-scrollbar {display:none}
   .rem_p
     color $color-theme
     font-size $font-size-medium-x

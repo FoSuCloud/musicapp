@@ -183,7 +183,7 @@
             that.$refs.right.style.transform=`rotate(${angle}deg)`
           }else if(angle>=180){
             that.$refs.right.style.transform=`rotate(0deg)`
-            that.$refs.left.style.background=`linear-gradient(45deg,#ffcd32,#d93f30)`
+            that.$refs.left.style.background=`#ffd700`
             that.$refs.left.style.transform=`rotate(${angle-180}deg)`
             // 切换播放是否,但是目前还未有下一首的选项
             if(audio.currentTime>=audio.duration){
@@ -360,7 +360,7 @@
               width 17rem
               height 17rem
               border-radius 50%
-              background linear-gradient(45deg,$color-theme,$color-sub-theme)
+              background #ffd700
               position relative
               .right
                 position absolute

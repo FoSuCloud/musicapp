@@ -46,7 +46,7 @@ export default new Router({
     },
     {
       path :'/recommend',
-      component:recommend,
+      // component:recommend,  // 去掉这里,否则会渲染该组件两次
       name:'recommend'
     }
   ]

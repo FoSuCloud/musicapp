@@ -248,6 +248,7 @@
       box-sizing border-box
       overflow scroll
       position relative
+      &::-webkit-scrollbar {display:none}
       .s_list_c
         padding 1rem 0 0
         &:first-child

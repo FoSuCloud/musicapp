@@ -118,6 +118,7 @@
   .singer
     overflow scroll
     position relative
+    &::-webkit-scrollbar {display:none}
     .singer_l
       .s_l_box
         background $color-highlight-background
